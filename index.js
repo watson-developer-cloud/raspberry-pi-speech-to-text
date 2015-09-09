@@ -23,6 +23,10 @@ function exit(err) {
     process.exit(1);
 }
 
+function updateLine(text) {
+    cursor.horizontalAbsolute(0).eraseLine().write(text);
+}
+
 
 // first set up a session to connect the output and input(s)
 speech_to_text.createSession(null, function(err, session) {
@@ -39,7 +43,7 @@ speech_to_text.createSession(null, function(err, session) {
         if (err) {
             exit(err);
         }
-        cursor.horizontalAbsolute(0).eraseLine().write(transcript.results[0].alternatives[0].transcript);
+        updateLine('interim: ' + transcript.results[0].alternatives[0].transcript);
     });
 
 
@@ -53,27 +57,26 @@ speech_to_text.createSession(null, function(err, session) {
             exit(err);
         }
         lightshow.stop();
-        cursor.horizontalAbsolute(0).eraseLine().write(transcript.results[0].alternatives[0].transcript);
+        updateLine('final: ' + transcript.results[0].alternatives[0].transcript + '\n');
     }).on('error', console.error);
 
-    ['exit','close','end'].forEach(function(event) {
-        transcriptInput.on(event, console.log.bind(console, 'transcript input', event));
-    });
+    //['exit','close','end'].forEach(function(event) {
+    //    transcriptInput.on(event, console.log.bind(console, 'transcript input', event));
+    //});
 
-    var mic = spawn('arecord', ['--device=plughw:1,0', '--format=S16_LE', '--rate=44100', '--channels=1', '--duration=10']);
-    mic.stderr.pipe(process.stderr);
+    var mic = spawn('arecord', ['--device=plughw:1,0', '--format=S16_LE', '--rate=44100', '--channels=1']); //, '--duration=10'
+    //mic.stderr.pipe(process.stderr);
     mic.stdout.pipe(transcriptInput);
     lightshow.blinkRed();
-    console.log('Recording...');
 
-    ['exit','close','end'].forEach(function(event) {
-        mic.stdout.on(event, console.log.bind(console, 'mic output', event));
-    });
+    //['exit','close','end'].forEach(function(event) {
+    //    mic.stdout.on(event, console.log.bind(console, 'mic output', event));
+    //});
 
 
-    //setTimeout(function() {
-    //    mic.kill();
-    //}, 15* 1000);
+    setTimeout(function() {
+        mic.kill();
+    }, 15* 1000);
 
 });
 
