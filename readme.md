@@ -11,7 +11,7 @@ See the recently transcribed text occasionally change as Watson decides on a new
 * **Node.js** - Tested and working on `v0.12.7`. 
   (I'm using pre-compiled binaries from http://conoroneill.net/node-v01040-and-v0127-for-arm-v7-raspberry-pi-2-banana-pi-odroid-c1-available)
   It was tested on `v4.0.0` but at least one dependency had issues compiling.
-* **IBM Watson Speech to Text service credentials** - 
+* **Speech to Text service credentials** - 
   Log into bluemix.net, create a STT service instance, bind it to an app, click the "show credentials" link in the app's dashboard.
   Then put the username and password in either index.js or the `STT_USERNAME` and `STT_PASSWORD` environment variables. 
   You can also put them into a `.env` file which will be automatically parsed by https://www.npmjs.com/package/dotenv
