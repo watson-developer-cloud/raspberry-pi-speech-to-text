@@ -16,11 +16,11 @@ See the recently transcribed text occasionally change as Watson decides on a new
   Then put the username and password in either index.js or the `STT_USERNAME` and `STT_PASSWORD` environment variables. 
   You can also put them into a `.env` file which will be automatically parsed by https://www.npmjs.com/package/dotenv
 * **USB Microphone** - Tested with the following:
-* * Kinobo X000NPSKOB
-* * Logitech Mobile Speakerphone P710e (connected via USB, not tested over bluetooth)
-* * PS3 Eye
-* * StarTech Stereo Audio USB Sound Card ICUSBAUDIOMH
-* * Should work with any other Microphone that plays nice with ALSA
+  * Kinobo X000NPSKOB
+  * Logitech Mobile Speakerphone P710e (connected via USB, not tested over bluetooth)
+  * PS3 Eye
+  * StarTech Stereo Audio USB Sound Card ICUSBAUDIOMH
+  * Should work with any other Microphone that plays nice with ALSA
 
 ## Recommendations:
 
@@ -38,3 +38,9 @@ Download the code and run `npm install` in the directory.
 Run `node index.js`, wait for the red LED to begin blinking, and then start talking. 
 
 If you don't see any text after a moment or two, make sure that you're online, your mic is unmuted, and the `arecord` and `aplay` commands can record and play back sound.
+
+## Todo:
+
+* Test on a PI 1
+* Add lots of links and cleanup the documentation
+* Shoot a video of it in action
