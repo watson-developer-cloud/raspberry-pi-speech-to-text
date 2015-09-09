@@ -51,7 +51,11 @@ speech_to_text.createSession(null, function(err, session) {
         if (err) {
             exit(err);
         }
-        updateLine('interim: ' + transcript.results[0].alternatives[0].transcript);
+        if (transcript.results[0].final) {
+            updateLine('final: ' + transcript.results[0].alternatives[0].transcript + '\n');
+        } else {
+            updateLine('interim: ' + transcript.results[0].alternatives[0].transcript);
+        }
     });
 
 
@@ -59,13 +63,15 @@ speech_to_text.createSession(null, function(err, session) {
     var transcriptInput = speech_to_text.recognizeLive({
         content_type: hasFlac ? 'audio/flac' : 'audio/l16; rate=44100',
         cookie_session: session.cookie_session,
-        session_id: session.session_id
+        session_id: session.session_id,
+        interim_results: true,
+        continuous: true
     }, function(err, transcript) {
         if (err) {
             exit(err);
         }
         lightshow.stop();
-        updateLine('final: ' + transcript.results[0].alternatives[0].transcript + '\n');
+        //updateLine('final: ' + transcript.results[0].alternatives[0].transcript + '\n');
     }).on('error', console.error);
 
     //['exit','close','end'].forEach(function(event) {
@@ -79,7 +85,6 @@ speech_to_text.createSession(null, function(err, session) {
         var flac = cp.spawn('flac', ['-0', '-', '-']);
         //flac.stderr.pipe(process.stderr);
 
-        //require('fs').createReadStream('test.wav')
         mic.stdout.pipe(flac.stdin);
         //mic.stdout.pipe(transcriptInput);
 
@@ -88,6 +93,9 @@ speech_to_text.createSession(null, function(err, session) {
         mic.stdout.pipe(transcriptInput);
     }
 
+
+    // alternate option for testing: comment out all of the mic/flac stuff and pipe from a file
+    //require('fs').createReadStream('test.wav').pipe(transcriptInput);
 
 
     //mic.stdout.pipe(require('fs').createWriteStream('test.wav'));
