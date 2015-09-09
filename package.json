@@ -1,7 +1,8 @@
 {
   "name": "raspberry-pi-speech-to-text",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Transcribes speech on a Raspberry Pi with the IBM Watson Speech to Text service and a USB Microphone",
+  "repository": "https://github.com/watson-developer-cloud/raspberry-pi-speech-to-text",
   "main": "index.js",
   "dependencies": {
     "ansi": "^0.3.0",
