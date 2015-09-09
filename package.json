@@ -4,6 +4,7 @@
   "description": "Transcribes speech on a Raspberry Pi with the IBM Watson Speech to Text service and a USB Microphone",
   "main": "index.js",
   "dependencies": {
+    "ansi": "^0.3.0",
     "dotenv": "^1.2.0",
     "onoff": "^1.0.2",
     "watson-developer-cloud": "^0.9.29"

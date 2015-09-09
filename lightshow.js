@@ -5,11 +5,12 @@ var Gpio = require('onoff').Gpio,
     red = new Gpio(27, 'out'),
     green = new Gpio(5, 'out'),
     leds = [blue, yellow, red, green],
-    index = 3,
+    index = 0,
     interval;
 
 
-function start() {
+function spinner() {
+    leds[0].write(1);
     interval = setInterval(function() {
         var led = leds[index%leds.length];
         led.write(0);
@@ -25,6 +26,18 @@ function stop() {
     led.write(0);
 }
 
-exports.start = start;
+function blinkRed() {
+    stop();
+    index = 2; // so that the stop command knows which led to turn off once we're done here
+    var isOn = true;
+    red.write(isOn);
+    interval = setInterval(function() {
+        isOn = !isOn;
+        red.write(isOn ? 1 : 0);
+    }, 400);
+}
+
+exports.start = spinner;
+exports.blinkRed = blinkRed;
 exports.stop = stop;
 
