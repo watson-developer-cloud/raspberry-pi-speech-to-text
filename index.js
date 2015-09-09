@@ -1,4 +1,4 @@
-var spawn = require('child_process').spawn;
+var cp = require('child_process');
 var watson = require('watson-developer-cloud');
 var lightshow = require('./lightshow');
 var ansi = require('ansi');
@@ -27,6 +27,14 @@ function updateLine(text) {
     cursor.horizontalAbsolute(0).eraseLine().write(text);
 }
 
+// sudo apt-get update && sudo apt-get install flac -y
+var hasFlac = false;
+try {
+    hasFlac = !!cp.execSync('which flac').toString().trim()
+} catch (ex) {
+    // I think cp.execSync throws any time the exit code isn't 0
+}
+
 
 // first set up a session to connect the output and input(s)
 speech_to_text.createSession(null, function(err, session) {
@@ -49,7 +57,7 @@ speech_to_text.createSession(null, function(err, session) {
 
     // set up the recognize live to handle inputs
     var transcriptInput = speech_to_text.recognizeLive({
-        content_type: 'audio/l16; rate=44100',
+        content_type: hasFlac ? 'audio/flac' : 'audio/l16; rate=44100',
         cookie_session: session.cookie_session,
         session_id: session.session_id
     }, function(err, transcript) {
@@ -64,15 +72,31 @@ speech_to_text.createSession(null, function(err, session) {
     //    transcriptInput.on(event, console.log.bind(console, 'transcript input', event));
     //});
 
-    var mic = spawn('arecord', ['--device=plughw:1,0', '--format=S16_LE', '--rate=44100', '--channels=1']); //, '--duration=10'
+    var mic = cp.spawn('arecord', ['--device=plughw:1,0', '--format=S16_LE', '--rate=44100', '--channels=1']); //, '--duration=10'
     //mic.stderr.pipe(process.stderr);
-    mic.stdout.pipe(transcriptInput);
+
+    if (hasFlac) {
+        var flac = cp.spawn('flac', ['-0', '-', '-']);
+        //flac.stderr.pipe(process.stderr);
+
+        //require('fs').createReadStream('test.wav')
+        mic.stdout.pipe(flac.stdin);
+        //mic.stdout.pipe(transcriptInput);
+
+        flac.stdout.pipe(transcriptInput);
+    } else {
+        mic.stdout.pipe(transcriptInput);
+    }
+
+
+
+    //mic.stdout.pipe(require('fs').createWriteStream('test.wav'));
+
     lightshow.blinkRed();
 
     //['exit','close','end'].forEach(function(event) {
     //    mic.stdout.on(event, console.log.bind(console, 'mic output', event));
     //});
-
 
     setTimeout(function() {
         mic.kill();
