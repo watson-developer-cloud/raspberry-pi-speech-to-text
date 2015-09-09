@@ -9,6 +9,15 @@ require('dotenv').load({silent: true});
 
 lightshow.start();
 
+// save bandwidth with FLAC lossless compression
+// sudo apt-get update && sudo apt-get install flac -y
+var hasFlac = false;
+try {
+    hasFlac = !!cp.execSync('which flac').toString().trim()
+} catch (ex) {
+    // I think cp.execSync throws any time the exit code isn't 0
+}
+
 
 var speech_to_text = watson.speech_to_text({
     username: process.env.STT_USERNAME,
@@ -27,15 +36,6 @@ function updateLine(text) {
     cursor.horizontalAbsolute(0).eraseLine().write(text);
 }
 
-// sudo apt-get update && sudo apt-get install flac -y
-var hasFlac = false;
-try {
-    hasFlac = !!cp.execSync('which flac').toString().trim()
-} catch (ex) {
-    // I think cp.execSync throws any time the exit code isn't 0
-}
-
-
 // first set up a session to connect the output and input(s)
 speech_to_text.createSession(null, function(err, session) {
     if (err) {
@@ -51,11 +51,10 @@ speech_to_text.createSession(null, function(err, session) {
         if (err) {
             exit(err);
         }
-        if (transcript.results[0].final) {
-            updateLine('final: ' + transcript.results[0].alternatives[0].transcript + '\n');
-        } else {
-            updateLine('interim: ' + transcript.results[0].alternatives[0].transcript);
-        }
+        // "final" indicates that the service is done processing that bit of audio (usually after a pause)
+        // in that case, add a newline so that we don't overwrite it with text from the next bit of audio
+        updateLine(transcript.results[0].alternatives[0].transcript + (transcript.results[0].final ? '\n' : ''));
+
     });
 
 
@@ -66,49 +65,44 @@ speech_to_text.createSession(null, function(err, session) {
         session_id: session.session_id,
         interim_results: true,
         continuous: true
-    }, function(err, transcript) {
+    }, function(err /*, finalTranscript */) {
         if (err) {
             exit(err);
         }
-        lightshow.stop();
-        //updateLine('final: ' + transcript.results[0].alternatives[0].transcript + '\n');
+        lightshow.stop(); // recording is over, turn off the blinky red light
     }).on('error', console.error);
 
-    //['exit','close','end'].forEach(function(event) {
-    //    transcriptInput.on(event, console.log.bind(console, 'transcript input', event));
-    //});
-
+    // start the recording
     var mic = cp.spawn('arecord', ['--device=plughw:1,0', '--format=S16_LE', '--rate=44100', '--channels=1']); //, '--duration=10'
     //mic.stderr.pipe(process.stderr);
 
+    // save a local copy of your audio (in addition to streaming it) by uncommenting this
+    //mic.stdout.pipe(require('fs').createWriteStream('test.wav'));
+
+    // optionally compress, and then pipe the audio to the STT service
     if (hasFlac) {
         var flac = cp.spawn('flac', ['-0', '-', '-']);
         //flac.stderr.pipe(process.stderr);
 
         mic.stdout.pipe(flac.stdin);
-        //mic.stdout.pipe(transcriptInput);
 
         flac.stdout.pipe(transcriptInput);
     } else {
         mic.stdout.pipe(transcriptInput);
     }
 
-
     // alternate option for testing: comment out all of the mic/flac stuff and pipe from a file
     //require('fs').createReadStream('test.wav').pipe(transcriptInput);
 
 
-    //mic.stdout.pipe(require('fs').createWriteStream('test.wav'));
-
+    // indicate recording with a blinking red light
     lightshow.blinkRed();
 
-    //['exit','close','end'].forEach(function(event) {
-    //    mic.stdout.on(event, console.log.bind(console, 'mic output', event));
-    //});
-
+    // end the recording
     setTimeout(function() {
         mic.kill();
-    }, 15* 1000);
+        lightshow.stop(); // recording is over, turn off the blinky red light
+    }, 45* 1000);
 
 });
 
