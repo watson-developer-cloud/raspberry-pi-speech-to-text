@@ -5,6 +5,8 @@ Make your Pi listen to your speech and transcribe the results to the console.
 
 See the recently transcribed text occasionally change as Watson decides on a new translation based on added context.
 
+Also see https://github.com/watson-developer-cloud/raspberry-pi-time-weather-demo for an example of using Text to Speech on a Raspberry Pi (but note that it currently uses a different GPIO library that hasn't yet been updated for Node.js v4.x)
+
 ## Requirements:
 
 * **Raspberry Pi** - Tested on a Model B 2 (1GB)
