@@ -7,6 +7,8 @@ See the recently transcribed text occasionally change as Watson decides on a new
 
 Also see https://github.com/watson-developer-cloud/raspberry-pi-time-weather-demo for an example of using Text to Speech on a Raspberry Pi
 
+**Note:** While this example should still work, it uses the older REST API, which is a bit more complicated than the newer Websocket-based API. The current recomendation is to use `createRecognizeStream` ([example](https://github.com/watson-developer-cloud/node-sdk/blob/master/examples/speech_to_text.v1.js)) instead of `createSession` + `observeResult` + `recognizeLive`. (This code should be updated sometime soon.)
+
 ## Requirements:
 
 * **Raspberry Pi** - Tested on a Model B 2 (1GB)
