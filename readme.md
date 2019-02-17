@@ -1,6 +1,8 @@
 Raspberry Pi & IBM Watson Speech to Text
 ========================================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/watson-developer-cloud/raspberry-pi-speech-to-text.svg)](https://greenkeeper.io/)
+
 Make your Pi listen to your speech and transcribe the results to the console. 
 
 See the recently transcribed text occasionally change as Watson decides on a new translation based on added context.
