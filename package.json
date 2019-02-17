@@ -6,9 +6,9 @@
   "main": "index.js",
   "dependencies": {
     "ansi": "^0.3.0",
-    "dotenv": "^1.2.0",
-    "onoff": "^1.0.2",
-    "watson-developer-cloud": "^0.9.29"
+    "dotenv": "^6.2.0",
+    "onoff": "^3.2.7",
+    "watson-developer-cloud": "^3.18.1"
   },
   "devDependencies": {},
   "scripts": {
