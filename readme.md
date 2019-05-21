@@ -1,6 +1,8 @@
 Raspberry Pi & IBM Watson Speech to Text
 ========================================
 
+## DEPRECATED: this repo is no longer actively maintained. It can still be used as reference, but may contain outdated or unpatched code.
+
 Make your Pi listen to your speech and transcribe the results to the console. 
 
 See the recently transcribed text occasionally change as Watson decides on a new translation based on added context.
